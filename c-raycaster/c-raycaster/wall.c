@@ -31,7 +31,7 @@ void RenderWallProjection(void) {
 		}
 
 		// Get correct texture ID from map content
-		int texNum = rays[x].wallHitContent - 1;
+		int texNum = rays[x].texture - 1;
 
 		// Query texture width and height from upng
 		int texture_width = upng_get_width(textures[texNum]);

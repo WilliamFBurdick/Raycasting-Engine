@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "utils.h"
 #include "upng.h"
+#include "ray.h"
 
 typedef struct {
 	float x;

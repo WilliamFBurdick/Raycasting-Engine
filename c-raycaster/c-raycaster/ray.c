@@ -33,7 +33,7 @@ void CastRay(float rayAngle, int stripID) {
 	bool foundHorizWallHit = false;
 	float horizWallHitX = 0;
 	float horizWallHitY = 0;
-	int horizWallContent = 0;
+	int horizWallTexture = 0;
 
 	// find y-coordinate of closest horizontal grid intersection
 	yintercept = floor(player.y / TILE_SIZE) * TILE_SIZE;
@@ -61,7 +61,7 @@ void CastRay(float rayAngle, int stripID) {
 		if (MapHasWallAt(xToCheck, yToCheck)) {
 			horizWallHitX = nextHorizTouchX;
 			horizWallHitY = nextHorizTouchY;
-			horizWallContent = GetMapAt((int)floor(yToCheck / TILE_SIZE), (int)floor(xToCheck / TILE_SIZE));
+			horizWallTexture = GetMapAt((int)floor(yToCheck / TILE_SIZE), (int)floor(xToCheck / TILE_SIZE));
 			foundHorizWallHit = true;
 			break;
 		}
@@ -77,7 +77,7 @@ void CastRay(float rayAngle, int stripID) {
 	bool foundVertWallHit = false;
 	float vertWallHitX = 0;
 	float vertWallHitY = 0;
-	int vertWallContent = 0;
+	int vertWallTexture = 0;
 
 	// find x-coordinate of closest vertical grid intersection
 	xintercept = floor(player.x / TILE_SIZE) * TILE_SIZE;
@@ -104,7 +104,7 @@ void CastRay(float rayAngle, int stripID) {
 		if (MapHasWallAt(xToCheck, yToCheck)) {
 			vertWallHitX = nextVertTouchX;
 			vertWallHitY = nextVertTouchY;
-			vertWallContent = GetMapAt((int)floor(yToCheck / TILE_SIZE), (int)floor(xToCheck / TILE_SIZE));
+			vertWallTexture = GetMapAt((int)floor(yToCheck / TILE_SIZE), (int)floor(xToCheck / TILE_SIZE));
 			foundVertWallHit = true;
 			break;
 		}
@@ -127,7 +127,7 @@ void CastRay(float rayAngle, int stripID) {
 		rays[stripID].wallHitY = vertWallHitY;
 		rays[stripID].distance = vertHitDistance;
 		rays[stripID].wasHitVertical = true;
-		rays[stripID].wallHitContent = vertWallContent;
+		rays[stripID].texture = vertWallTexture;
 		rays[stripID].rayAngle = rayAngle;
 	}
 	else {
@@ -135,7 +135,7 @@ void CastRay(float rayAngle, int stripID) {
 		rays[stripID].wallHitY = horizWallHitY;
 		rays[stripID].distance = horizHitDistance;
 		rays[stripID].wasHitVertical = false;
-		rays[stripID].wallHitContent = horizWallContent;
+		rays[stripID].texture = horizWallTexture;
 		rays[stripID].rayAngle = rayAngle;
 	}
 

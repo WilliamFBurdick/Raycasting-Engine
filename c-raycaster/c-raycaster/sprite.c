@@ -1,9 +1,10 @@
 #include "sprite.h"
 
-#define NUM_SPRITES 1
+#define NUM_SPRITES 2
 
 static sprite_t sprites[NUM_SPRITES] = {
-	{.x = 640, .y = 630, .texture = 9}
+	{.x = 640, .y = 630, .texture = 9},
+	{.x = 660, .y = 690, .texture = 9}
 };
 
 void RenderMapSprites(void) {
@@ -30,7 +31,8 @@ void RenderSpriteProjection(void) {
 		angleSpritePlayer = fabs(angleSpritePlayer);
 
 		// If sprite angle is less than half of FOV plus small error margin
-		if (angleSpritePlayer < (FOV_ANGLE / 2)) {
+		const float EPSILON = 0.2;
+		if (angleSpritePlayer < (FOV_ANGLE / 2) + EPSILON) {
 			sprites[i].visible = true;
 			sprites[i].angle = angleSpritePlayer;
 			sprites[i].distance = DistanceBetweenPoints(sprites[i].x, sprites[i].y, player.x, player.y);
@@ -42,13 +44,27 @@ void RenderSpriteProjection(void) {
 		}
 	}
 	
+	// Sort sprites by distance using bubble-sort to ensure further sprites rendered first
+	for (int i = 0; i < numVisibleSprites; i++) {
+		for (int j = i + 1; j < numVisibleSprites; j++) {
+			if (visibleSprites[i].distance < visibleSprites[j].distance) {
+				sprite_t temp = visibleSprites[i];
+				visibleSprites[i] = visibleSprites[j];
+				visibleSprites[j] = temp;
+			}
+		}
+	}
+
 	// Render all visible sprites
 	for (int i = 0; i < numVisibleSprites; i++) {
 		// Draw pixels of sprite in correct screen position
 		sprite_t sprite = visibleSprites[i];
 		
+		// Calculate perpendicular distance of sprite to avoid fish-eye
+		float perpDistance = sprite.distance * cos(sprite.angle);
+
 		// Calculate the sprite projected height and width
-		float spriteHeight = (TILE_SIZE / sprite.distance) * DIST_PROJ_PLANE;
+		float spriteHeight = (TILE_SIZE / perpDistance) * DIST_PROJ_PLANE;
 		float spriteWidth = spriteHeight;
 
 		// Sprite top Y
@@ -84,7 +100,7 @@ void RenderSpriteProjection(void) {
 					color_t* spriteTextureBuffer = (color_t*)upng_get_buffer(textures[sprite.texture]);
 					color_t texelColor = spriteTextureBuffer[(textureWidth * textureOffsetY) + textureOffsetX];
 
-					if (texelColor != 0xFFFF00FF) {
+					if (sprite.distance < rays[x].distance && texelColor != 0xFFFF00FF) {
 						DrawPixel(x, y, texelColor);
 					}
 
